@@ -1,5 +1,12 @@
 # NJAM-you-draw-it
+
 Charts where readers guess the trend.
+
+## From Rick Leir:
+
+The endangered species in Canada are documented at Environment Canada, but their site is a bit dry. Let's make it a bit more catchy, and get everyone involved by asking them to draw the graph over the years.
+
+## From EPetenko:
 
 First off, 90 percent of this code is owed to NYT's Adam Pearce. My only real changes were design-related.
 
