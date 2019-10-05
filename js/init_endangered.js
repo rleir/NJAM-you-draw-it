@@ -1,4 +1,3 @@
-var pymChild = null;
 var pymChild = new pym.Child();
 
 var data = [
