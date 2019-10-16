@@ -38,14 +38,23 @@ var c = d3.conventions({
 
 pymChild.sendHeight();
 
+c.svg
+    .append('rect')
+    .at({width: c.width, height: c.height, opacity: 0})
 
+c.svg
+    .append('circle')
+    .attr('cx',c.totalWidth*.21-13)
+    .attr('cy',c.height*.53)
+    .attr('r', 5)
+    .attr('class', 'intro-dot')
 
-c.svg.append('rect').at({width: c.width, height: c.height, opacity: 0})
-
-c.svg.append('circle').attr('cx',c.totalWidth*.21-13).attr('cy',c.height*.53).attr('r', 5).attr('class', 'intro-dot')
-
-c.svg.append('text').attr('x',c.totalWidth*.21-5).attr('y',c.height*.52).text('Start dragging here').attr('class','intro-text')
-
+c.svg
+    .append('text')
+    .attr('x',c.totalWidth*.21-5)
+    .attr('y',c.height*.52)
+    .text('Start dragging here')
+    .attr('class','intro-text')
 
 c.x.domain([2001, 2019])
 c.y.domain([0, 400])
@@ -53,8 +62,16 @@ c.y.domain([0, 400])
 c.xAxis.ticks(4).tickFormat(ƒ())
 c.yAxis.ticks(5).tickFormat(d => d )
 
-var area = d3.area().x(ƒ('year', c.x)).y0(ƒ('endangered', c.y)).y1(c.height)
-var line = d3.area().x(ƒ('year', c.x)).y(ƒ('endangered', c.y))
+var area = d3
+    .area()
+    .x(ƒ('year', c.x))
+    .y0(ƒ('endangered', c.y))
+    .y1(c.height)
+
+var line = d3
+    .area()
+    .x(ƒ('year', c.x))
+    .y(ƒ('endangered', c.y))
 
 var clipRect = c.svg
   .append('clipPath#clip')
@@ -99,7 +116,11 @@ var drag = d3.drag()
       clipRect.transition().duration(1000).attr('width', c.x(2019))
         d3.select('#answer-3')
             .style('visibility', 'visible')
-            .html("<div>You guessed <p class='your-pink'>"+ d3.format(",.3r")(yourData[yourData.length-1].endangered) + "</p> for 2019.</div><div>The real value was <p class='your-pink'>"+d3.format(",.3r")(data[18].endangered)+"</p>.</div>")
+            .html("<div>You guessed <p class='your-pink'>"
+                  + d3.format(",.3r")(yourData[yourData.length-1].endangered)
+                  + "</p> for 2019.</div><div>The real value was <p class='your-pink'>"
+                  + d3.format(",.3r")(data[18].endangered)
+                  + "</p>.</div>")
       d3.select('#explain-3').style('visibility', 'visible').style('opacity', 1)
           pymChild.sendHeight();
 
