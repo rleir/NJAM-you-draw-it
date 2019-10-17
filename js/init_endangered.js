@@ -62,7 +62,7 @@ c.y.domain([0, 400])
 c.xAxis.ticks(4).tickFormat(ƒ())
 c.yAxis.ticks(5).tickFormat(d => d )
 
-var area = d3
+var given_area = d3
     .area()
     .x(ƒ('year', c.x))
     .y0(ƒ('endangered', c.y))
@@ -79,8 +79,10 @@ var clipRect = c.svg
   .at({width: c.x(2005) - 2, height: c.height})
 
 var correctSel = c.svg.append('g').attr('clip-path', 'url(#clip)')
+var undef_ed_Sel = c.svg.append('g')
 
-correctSel.append('path.area.endangered-area').at({d: area(data)})
+
+correctSel.append('path.area.endangered-area').at({d: given_area(data)})
 correctSel.append('path.line').at({d: line(data)})
 yourDataSel = c.svg.append('path#your-line-3').attr('class', 'your-line endangered-line')
 
@@ -95,36 +97,47 @@ yourData = data
 
 var completed = false
 
+var undef_en_area = d3
+                .area()
+                .x(ƒ('year', c.x))
+                .y0(                ƒ('defined', c.y)? c.height : 0)  //zzz aalways 0
+                .y1(0)
+
 var drag = d3.drag()
   .on('drag', function(){
     d3.selectAll('.intro-text').style('opacity', 0)
     var pos = d3.mouse(this)
     var year = clamp(2005, 2019, c.x.invert(pos[0]))
-    var endangered = clamp(0, c.y.domain()[1], c.y.invert(pos[1]))
+    var clamp_endangered = clamp(0, c.y.domain()[1], c.y.invert(pos[1]))
 
     yourData.forEach(function(d){
       if (Math.abs(d.year - year) < .5){
-        d.endangered = endangered
+        d.endangered = clamp_endangered
         d.defined = true
       }
     })
 
     yourDataSel.at({d: line.defined(ƒ('defined'))(yourData)})
 
-    if (!completed && d3.mean(yourData, ƒ('defined')) == 1){
-      completed = true
-      clipRect.transition().duration(1000).attr('width', c.x(2019))
-        d3.select('#answer-3')
-            .style('visibility', 'visible')
-            .html("<div>You guessed <p class='your-pink'>"
-                  + d3.format(",.3r")(yourData[yourData.length-1].endangered)
-                  + "</p> for 2019.</div><div>The real value was <p class='your-pink'>"
-                  + d3.format(",.3r")(data[18].endangered)
-                  + "</p>.</div>")
-      d3.select('#explain-3').style('visibility', 'visible').style('opacity', 1)
-          pymChild.sendHeight();
+    if (!completed){
+        d3.selectAll(".incomplete-range").remove();
+        if( d3.mean(yourData, ƒ('defined')) == 1){
+            completed = true
+            d3.selectAll(".incomplete-range").remove();
 
-
+            clipRect.transition().duration(1000).attr('width', c.x(2019))
+            d3.select('#answer-3')
+                .style('visibility', 'visible')
+                .html("<div>You guessed <p class='your-pink'>"
+                      + d3.format(",.3r")(yourData[yourData.length-1].endangered)
+                      + "</p> for 2019.</div><div>The real value was <p class='your-pink'>"
+                      + d3.format(",.3r")(data[18].endangered)
+                      + "</p>.</div>")
+            d3.select('#explain-3').style('visibility', 'visible').style('opacity', 1)
+            pymChild.sendHeight();
+        }else{
+            undef_ed_Sel.append('path.area.incomplete-range').at({d: undef_en_area(yourData)})
+        }
     }
   })
 
